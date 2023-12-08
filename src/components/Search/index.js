@@ -14,19 +14,30 @@ const Search = () => {
       },
       params: {
         q: searchKey, // Todo: Check for empty searchKey 
-        type: "track"
+        type: "track",
+        limit: 10
       }
-    })
+    });
 
     setTracks(data.tracks.items)
   }
 
   const renderTracks = () => {
     return tracks.map(track => (
-      <div class="text-white" key={track.id}>
-        {track.name}
+      <div class="text-center text-white" key={track.id}>
+        <p>"{track.name}" by {renderArtists(track.artists)}</p>
       </div>
-    ))
+    ));
+  }
+
+  const renderArtists = (artists) => {
+    let artistsStr = ""
+    for (let i = 0; i < artists.length - 1; i++) {
+      artistsStr += artists[i].name + ", ";
+    }
+    artistsStr += artists[artists.length - 1].name;
+
+    return artistsStr
   }
   
   return (
