@@ -4,7 +4,7 @@ import Search from "./components/Search";
 
 function App() {
   return (
-    <div class="bg-gray-900 h-screen">
+    <div class="bg-gray-900 h-screen w-screen flex-col content-center">
       <NavBar />
       <Search />
     </div>
