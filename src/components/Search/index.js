@@ -24,8 +24,9 @@ const Search = () => {
 
   const renderTracks = () => {
     return tracks.map(track => (
-      <div class="text-center text-white" key={track.id}>
-        <p>"{track.name}" by {renderArtists(track.artists)}</p>
+      <div class="flex justify-start items-center text-white m-5 mx-10" key={track.id}>
+        {track.album.images.length ? <img src={track.album.images[2].url} alt="" class="overflow-hidden rounded-lg"/> : <div>No Image</div>}
+        <p class="mx-5">"{track.name}" by {renderArtists(track.artists)}</p>
       </div>
     ));
   }
