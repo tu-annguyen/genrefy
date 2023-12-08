@@ -13,7 +13,7 @@ const Search = () => {
         Authorization: `Bearer ${token}`
       },
       params: {
-        q: searchKey, // Todo: clean URL for Spotify ID
+        q: searchKey, // Todo: Check for empty searchKey 
         type: "track"
       }
     })
@@ -34,7 +34,11 @@ const Search = () => {
       {token ?
         <form class="my-5" onSubmit={searchTracks}>
           <input class="w-6/12 border rounded-lg p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" type="text" placeholder="Search track..." onChange={e => setSearchKey(e.target.value)}></input>
-          <button class="bg-green-500 text-white font-medium py-2 px-4 m-5 rounded" type={"submit"}>Search</button>
+          {searchKey ? 
+            <button class="bg-green-500 text-white font-medium py-2 px-4 m-5 rounded" type={"submit"}>Search</button>
+            : <button disabled title="Enter a track name before searching." class="bg-green-400 text-white font-medium py-2 px-4 m-5 rounded" type={"submit"}>Search</button>
+          }
+          
         </form>
       
         : <h2 class="text-white font-medium">Please login</h2>
