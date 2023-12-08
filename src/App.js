@@ -1,12 +1,12 @@
 import './App.css';
 import NavBar from "./components/NavBar";
-import TextBox from "./components/TextBox";
+import Search from "./components/Search";
 
 function App() {
   return (
     <div class="bg-gray-900 h-screen">
       <NavBar />
-      <TextBox />
+      <Search />
     </div>
   );
 }
