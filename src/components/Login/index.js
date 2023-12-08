@@ -33,7 +33,7 @@ const Login = () => {
     <div>
         {!token ? 
             <a class="bg-green-500 text-white font-medium py-2 px-4 my-5 rounded" href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login to Spotify</a>
-            : <button class="bg-green-500 text-white font-medium py-2 px-4 my-5 rounded" onClick={logout}>Logout</button>}
+            : <button class="bg-green-500 text-white font-medium py-2 px-4 rounded" onClick={logout}>Logout</button>}
     </div>
   );
 
