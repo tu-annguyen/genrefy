@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 const Search = () => {
   let token = window.localStorage.getItem("token");
@@ -13,7 +13,7 @@ const Search = () => {
         Authorization: `Bearer ${token}`
       },
       params: {
-        q: searchKey, // Todo: Check for empty searchKey 
+        q: searchKey,
         type: "track",
         limit: 10
       }
@@ -25,10 +25,20 @@ const Search = () => {
   const renderTracks = () => {
     return (
       <div class="w-full">
+        <div class="flex justify-start items-center text-white border-b-2 border-gray-700 p-3 m-5 mx-10">
+          <div class="min-w-[64px]"></div>
+          <p class="w-6/12 mx-5">Title</p>
+          <p class="w-4/12 mx-5">Album</p>
+        </div>
         {tracks.map(track => (
           <div class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700" key={track.id}>
-            {track.album.images.length ? <img src={track.album.images[2].url} alt="" class="overflow-hidden rounded-lg"/> : <div>No Image</div>}
-            <p class="mx-5">"{track.name}" by {renderArtists(track.artists)}</p>
+            {track.album.images.length ? 
+              <div class="min-w-[64px]">
+                <img src={track.album.images[2].url} alt="" class="overflow-hidden rounded-lg"/> 
+              </div>
+              : <div>No Image</div>}
+            <p class="w-6/12 mx-5">"{track.name}" by {renderArtists(track.artists)}</p>
+            <p class="w-4/12 mx-5">{track.album.name}</p>
           </div>
         ))};
       </div>
@@ -60,7 +70,10 @@ const Search = () => {
         : <h1 class="text-white font-medium text-3xl my-5">Please login</h1>
       }
 
-      {renderTracks()}
+      {tracks.length ? 
+        renderTracks()
+        : <div></div>
+      }
     </div>
   );
 }
