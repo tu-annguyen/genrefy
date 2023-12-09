@@ -56,7 +56,7 @@ const Search = () => {
   }
   
   return (
-    <div class="h-screen">
+    <div>
       {token ?
         <form class="flex justify-center items-center my-5" onSubmit={searchTracks}>
           <input class="h-15 w-6/12 border rounded-lg p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" type="text" placeholder="Search track..." onChange={e => setSearchKey(e.target.value)}></input>
@@ -71,8 +71,10 @@ const Search = () => {
       }
 
       {tracks.length ? 
-        renderTracks()
-        : <div></div>
+        <div class="h-screen">
+          {renderTracks()}
+        </div>
+        : <div class="h-screen"></div>
       }
     </div>
   );
