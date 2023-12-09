@@ -1,18 +1,18 @@
 import Login from "../Login";
 
-const Navbar = () => {
+const NavBar = () => {
   return(
-    <nav class="flex flex-wrap items-center justify-between h-20 w-screen border-b-2 border-gray-700 mx-auto p-4 mb-5">
-      <a href="#" class="text-white font-bold text-xl">GENREIFY</a>
+    <nav class="flex flex-wrap items-center justify-between h-20 w-full border-b-4 border-gray-700 mx-auto p-4 mb-5">
+      <a href="/" class="text-white font-bold text-xl">GENREIFY</a>
       <ul class="flex items-center justify-end font-medium text-white">
         <li class="px-2">
-          <a href="#">Home</a>
+          <a href="/">Home</a>
         </li>
         <li class="px-2">
-          <a href="#">About</a>
+          <a href="/about">About</a>
         </li>
         <li class="px-2">
-          <a href="https://tu-annguyen.me/#contact-me">Contact</a>
+          <a href="https://tu-annguyen.me/#contact-me" target="_blank" rel="noopener noreferrer">Contact</a>
         </li>
         <li class="px-2">
           <Login />
@@ -20,6 +20,6 @@ const Navbar = () => {
       </ul>
     </nav>
   );
-};
+}
 
-export default Navbar;
+export default NavBar;

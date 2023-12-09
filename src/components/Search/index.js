@@ -23,12 +23,16 @@ const Search = () => {
   }
 
   const renderTracks = () => {
-    return tracks.map(track => (
-      <div class="flex justify-start items-center text-white m-5 mx-10" key={track.id}>
-        {track.album.images.length ? <img src={track.album.images[2].url} alt="" class="overflow-hidden rounded-lg"/> : <div>No Image</div>}
-        <p class="mx-5">"{track.name}" by {renderArtists(track.artists)}</p>
+    return (
+      <div class="w-full">
+        {tracks.map(track => (
+          <div class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700" key={track.id}>
+            {track.album.images.length ? <img src={track.album.images[2].url} alt="" class="overflow-hidden rounded-lg"/> : <div>No Image</div>}
+            <p class="mx-5">"{track.name}" by {renderArtists(track.artists)}</p>
+          </div>
+        ))};
       </div>
-    ));
+    );
   }
 
   const renderArtists = (artists) => {
@@ -42,7 +46,7 @@ const Search = () => {
   }
   
   return (
-    <div>
+    <div class="h-screen">
       {token ?
         <form class="flex justify-center items-center my-5" onSubmit={searchTracks}>
           <input class="h-15 w-6/12 border rounded-lg p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" type="text" placeholder="Search track..." onChange={e => setSearchKey(e.target.value)}></input>

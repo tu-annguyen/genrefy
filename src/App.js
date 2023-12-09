@@ -1,12 +1,15 @@
+import { Route, Routes } from "react-router-dom";
 import './App.css';
-import NavBar from "./components/NavBar";
-import Search from "./components/Search";
+import Home from "./components/Home";
+import About from "./components/About";
 
 function App() {
   return (
-    <div class="bg-gray-900 h-screen w-screen flex-col content-center">
-      <NavBar />
-      <Search />
+    <div class="bg-gray-900 h-full flex-col content-center">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes> 
     </div>
   );
 }
