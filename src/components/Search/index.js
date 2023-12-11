@@ -1,10 +1,12 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Search = () => {
   let token = window.localStorage.getItem("token");
   const [searchKey, setSearchKey] = useState("");
   const [tracks, setTracks] = useState([]);
+  const navigate = useNavigate();
 
   const searchTracks = async (e) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ const Search = () => {
           <p class="w-4/12 mx-5">Album</p>
         </div>
         {tracks.map(track => (
-          <div class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700" key={track.id}>
+          <div onClick={() => navigate("/track/" + track.id)} class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700 cursor-pointer" key={track.id}>
             {track.album.images.length ? 
               <div class="min-w-[64px]">
                 <img src={track.album.images[2].url} alt="" class="overflow-hidden rounded-lg"/> 
