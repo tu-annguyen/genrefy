@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Search = () => {
-  let token = window.localStorage.getItem("token");
+  const token = window.localStorage.getItem("token");
   const [searchKey, setSearchKey] = useState("");
   const [tracks, setTracks] = useState([]);
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Search = () => {
       params: {
         q: searchKey,
         type: "track",
-        limit: 10
+        limit: 10 
       }
     });
 
@@ -73,10 +73,10 @@ const Search = () => {
       }
 
       {tracks.length ? 
-        <div class="h-screen">
+        <div class="flex-grow">
           {renderTracks()}
         </div>
-        : <div class="h-screen"></div>
+        : <div class="flex-auto"></div>
       }
     </div>
   );
