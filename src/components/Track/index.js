@@ -7,6 +7,7 @@ const Track = () => {
   const token = window.localStorage.getItem("token");
   const { id } = useParams();
   const [genres, setGenres] = useState([]);
+  const [genresObj, setGenresObj] = useState({});
 
   useEffect(() => {
     const getTrack = async () => {
@@ -38,8 +39,16 @@ const Track = () => {
             if (!genres.includes(g)) {
               genres.push(g)
             }
+
+            if (!Object.hasOwn(genresObj, g)) {
+              genresObj[g] = 1 // Set to 0 initially because React.StrictMode renders components twice
+            } else {
+              genresObj[g] = genresObj[g] + 1
+            }
           });
-          setGenres([...genres]) // Spread syntax ensures the state array is replaced rather than mutated
+
+          setGenresObj({...genresObj}) // Spread syntax ensures the state array is replaced rather than mutated
+          setGenres([...genres])
         } catch (e) {
           console.log("No genres found.");
         }
@@ -51,28 +60,18 @@ const Track = () => {
       }
     }
 
+    console.log(genresObj);
     getTrack();
   }, [])
-
-  if (genres.length === 0) {
-    return (
-      <div class="bg-gray-900 h-full flex-col content-center text-white">
-        <NavBar />
-        <div>No genres found.</div>
-      </div>
-    );
-  }
 
   return (
     <div class="bg-gray-900 h-full flex-col content-center">
       <NavBar />
-      <div class="text-white">
+      <div class="flex justify-center text-white">
         { genres.length === 0 ?
             <div>No genres found.</div>
             : genres.map(genre => (
-              <div>
-                <h2>{ genre }</h2>
-              </div>
+              <div class="mx-2">{ genre }</div>
             ))
         }
       </div>
