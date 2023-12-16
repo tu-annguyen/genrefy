@@ -7,7 +7,7 @@ const Track = () => {
   const token = window.localStorage.getItem("token");
   const { id } = useParams();
   const [genres, setGenres] = useState([]);
-  const [genresObj, setGenresObj] = useState({});
+  const [genreObjs, setgenreObjs] = useState([]);// Counts the occurances of each genre
 
   useEffect(() => {
     const getTrack = async () => {
@@ -36,21 +36,37 @@ const Track = () => {
 
         try {
           artistObject.data.genres.forEach((g) => {
-            if (!genres.includes(g)) {
+            if (true || !genres.includes(g)) {
               genres.push(g)
             }
 
-            if (!Object.hasOwn(genresObj, g)) {
-              genresObj[g] = 1 // Set to 0 initially because React.StrictMode renders components twice
-            } else {
-              genresObj[g] = genresObj[g] + 1
-            }
+            // if (!Object.hasOwn(genreObjs, g)) {
+              // genreObjs[g] = 1
+            // } else {
+              // genreObjs[g] = genreObjs[g] + 1
+            // }
           });
 
-          setGenresObj({...genresObj}) // Spread syntax ensures the state array is replaced rather than mutated
+          for (let i = 0; i < genres.length; i++) {
+            let objIndex = genreObjs.findIndex(g => g.genre === genres[i]);
+            if (objIndex > -1) {
+              // Increment occurances in existing genre
+              genreObjs[objIndex] = {
+                genre: genres[i], 
+                occurs: genreObjs[objIndex].occurs + 1
+              }
+            } else {
+              genreObjs.push({
+                genre: genres[i],
+                occurs: 1
+              })
+            }
+          }
+
+          setgenreObjs({...genreObjs}) // Spread syntax ensures the state array is replaced rather than mutated
           setGenres([...genres])
         } catch (e) {
-          console.log("No genres found.");
+          console.error(e);
         }
       }
       
@@ -60,9 +76,36 @@ const Track = () => {
       }
     }
 
-    console.log(genresObj);
-    getTrack();
+    console.log(genreObjs);
+    getTrack();  
   }, [])
+
+  const rankGenres = (genresObj) => {
+    let genresObjArr = [];
+
+    for (let genre in genresObj) {
+      genresObjArr.push({
+        genre: genre,
+        occurances: genresObj[genre]
+      })
+    }
+
+    return genresObjArr 
+
+    genresObjArr.sort(function(a, b) {
+      return b.score - a.score
+    })
+
+    let rank = 1;
+    for (let i = 0; i < genresObjArr.length; i++) {
+      if (i > 0 && genresObjArr[i].score < genresObjArr[i - 1].score) {
+        rank++;
+      }
+      genresObjArr[i].rank = rank;
+    }
+
+    return genresObjArr 
+  }
 
   return (
     <div class="bg-gray-900 h-full flex-col content-center">
