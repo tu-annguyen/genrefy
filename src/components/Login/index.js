@@ -26,7 +26,7 @@ const Login = () => {
   const logout = () => {
     setToken("")
     window.localStorage.removeItem("token")
-    window.location.reload()
+    window.location.href = "/"
   }
 
   return (
