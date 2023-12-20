@@ -92,31 +92,54 @@ const Track = () => {
     return array;
   }
 
-  const renderGenres = (genreObjs) => {
+  const renderGenres = (genreObjs, rank) => {
     if (genreObjs.length === 0) {
       return (<div></div>)
     }
 
-    return (
-      <div class="flex">
-        { genreObjs.map(g => (
-            <div>
-              <h1 class="font-bold text-3xl mx-3">{ g.rank === 1 && g.genre }</h1>
-              <h1 class="font-medium text-2xl mx-3">{ g.rank === 2 && g.genre }</h1>
-              <h1 class="font-light text-xl mx-3">{ g.rank === 3 && g.genre }</h1>
-            </div>
-        ))}
-      </div>
-    );
+    if (rank === 1) {
+      return (
+        <div class="flex my-2">
+          { genreObjs.map(g => (
+              <h1 class="font-bold text-3xl mx-3">{ g.genre }</h1>
+          ))}
+        </div>
+      );
+    } else if (rank === 2) {
+      return (
+        <div class="flex my-2">
+          { genreObjs.map(g => (
+              <h2 class="font-medium text-2xl mx-3">{ g.genre }</h2>
+          ))}
+        </div>
+      );
+    } else if (rank === 3) {
+      return (
+        <div class="flex my-2">
+          { genreObjs.map(g => (
+              <h3 class="font-regular text-xl mx-3">{ g.genre }</h3>
+          ))}
+        </div>
+      );
+    } else {
+      return (
+        <div class="flex my-2">
+          { genreObjs.map(g => (
+              <h1 class="font-light text-lg mx-3">{ g.genre }</h1>
+          ))}
+        </div>
+      );
+    }
   }
 
   return (
     <div class="bg-gray-900 h-full flex-col content-center">
       <NavBar />
       <div class="text-white w-full">
-        { renderGenres(genreObjs.filter(genre => genre.rank === 1)) }
-        { renderGenres(genreObjs.filter(genre => genre.rank === 2)) }
-        { renderGenres(genreObjs.filter(genre => genre.rank === 3)) }
+        { renderGenres(genreObjs.filter(genre => genre.rank === 1), 1) }
+        { renderGenres(genreObjs.filter(genre => genre.rank === 2), 2) }
+        { renderGenres(genreObjs.filter(genre => genre.rank === 3), 3) }
+        { renderGenres(genreObjs.filter(genre => genre.rank !== 1 && genre.rank !== 2 && genre.rank !== 3), 4) }
         { /* genres.length === 0 ?
             <div>No genres found.</div>
             : genres.map(genre => (
