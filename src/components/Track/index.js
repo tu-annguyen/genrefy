@@ -39,12 +39,6 @@ const Track = () => {
             if (true || !genres.includes(g)) {
               genres.push(g)
             }
-
-            // if (!Object.hasOwn(genreObjs, g)) {
-              // genreObjs[g] = 1
-            // } else {
-              // genreObjs[g] = genreObjs[g] + 1
-            // }
           });
 
           for (let i = 0; i < genres.length; i++) {
@@ -63,7 +57,7 @@ const Track = () => {
             }
           }
 
-          setgenreObjs({...genreObjs}) // Spread syntax ensures the state array is replaced rather than mutated
+          setgenreObjs([...genreObjs, rankGenres(genreObjs)]) // Spread syntax ensures the state array is replaced rather than mutated
           setGenres([...genres])
         } catch (e) {
           console.error(e);
@@ -80,42 +74,54 @@ const Track = () => {
     getTrack();  
   }, [])
 
-  const rankGenres = (genresObj) => {
-    let genresObjArr = [];
-
-    for (let genre in genresObj) {
-      genresObjArr.push({
-        genre: genre,
-        occurances: genresObj[genre]
-      })
-    }
-
-    return genresObjArr 
-
-    genresObjArr.sort(function(a, b) {
-      return b.score - a.score
+  // Ranks genres by occurance
+  const rankGenres = (genreObjs) => {
+    let array = [].slice.call(genreObjs) // Turn genreObjs argument into array
+    array.sort((a, b) => {
+      return b.occurs - a.occurs
     })
 
     let rank = 1;
-    for (let i = 0; i < genresObjArr.length; i++) {
-      if (i > 0 && genresObjArr[i].score < genresObjArr[i - 1].score) {
+    for (let i = 0; i < array.length; i++) {
+      if (i > 0 && array[i].occurs < array[i - 1].occurs) {
         rank++;
       }
-      genresObjArr[i].rank = rank;
+      array[i].rank = rank;
     }
 
-    return genresObjArr 
+    return array;
+  }
+
+  const renderGenres = (genreObjs) => {
+    if (genreObjs.length === 0) {
+      return (<div></div>)
+    }
+
+    return (
+      <div class="flex">
+        { genreObjs.map(g => (
+            <div>
+              <h1 class="font-bold text-3xl mx-3">{ g.rank === 1 && g.genre }</h1>
+              <h1 class="font-medium text-2xl mx-3">{ g.rank === 2 && g.genre }</h1>
+              <h1 class="font-light text-xl mx-3">{ g.rank === 3 && g.genre }</h1>
+            </div>
+        ))}
+      </div>
+    );
   }
 
   return (
     <div class="bg-gray-900 h-full flex-col content-center">
       <NavBar />
-      <div class="flex justify-center text-white">
-        { genres.length === 0 ?
+      <div class="text-white w-full">
+        { renderGenres(genreObjs.filter(genre => genre.rank === 1)) }
+        { renderGenres(genreObjs.filter(genre => genre.rank === 2)) }
+        { renderGenres(genreObjs.filter(genre => genre.rank === 3)) }
+        { /* genres.length === 0 ?
             <div>No genres found.</div>
             : genres.map(genre => (
               <div class="mx-2">{ genre }</div>
-            ))
+            )) */
         }
       </div>
     </div>
