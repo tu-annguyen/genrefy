@@ -17,7 +17,6 @@ const Track = () => {
   // Update track for every new track searched
   useEffect(() => {
     setTrack(track);
-    console.log(track)
   }, [track])
 
   // Gets a track with the provided track ID
@@ -147,7 +146,7 @@ const Track = () => {
   const renderTrack = (trackObject) => {
     return (
       <div class="flex text-white">
-        <div>
+        <div class="mx-5">
           { trackObject.album.images.length ? 
             <div class="min-w-full">
               <img src={trackObject.album.images[1].url} alt="" class="overflow-hidden rounded-lg"/> 
@@ -155,11 +154,27 @@ const Track = () => {
             : <div>No Image</div> }
         </div>
 
-        <div>
-          { trackObject.name }
+        <div class="flex-col justify-end h-300">
+          <div class="text-4xl font-bold flex-none">
+            { trackObject.name }
+          </div>
+          <div class="text-lg flex-none">
+            <div class="flex">
+              <h2 class="font-semibold"> { renderArtists(trackObject) } </h2>
+              <h2 class="ml-1"> { trackObject.album.release_date.slice(0, 4) } </h2>
+            </div>
+          </div>
         </div>
       </div>
     );
+  }
+
+  const renderArtists = (track) => {
+    let artistStr = "";
+    for (const i in track.artists) {
+      artistStr += track.artists[i].name + " \u2022 "
+    }
+    return artistStr;
   }
 
   return (
@@ -175,12 +190,6 @@ const Track = () => {
         { renderGenres(genreObjs.filter(genre => genre.rank === 2), 2) }
         { renderGenres(genreObjs.filter(genre => genre.rank === 3), 3) }
         { renderGenres(genreObjs.filter(genre => genre.rank !== 1 && genre.rank !== 2 && genre.rank !== 3), 4) }
-        { /* genres.length === 0 ?
-            <div>No genres found.</div>
-            : genres.map(genre => (
-              <div class="mx-2">{ genre }</div>
-            )) */
-        }
       </div>
     </div>
   );
