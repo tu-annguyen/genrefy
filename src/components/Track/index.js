@@ -6,73 +6,83 @@ import NavBar from "../NavBar";
 const Track = () => {
   const token = window.localStorage.getItem("token");
   const { id } = useParams();
+  const [track, setTrack] = useState({});
   const [genres, setGenres] = useState([]);
   const [genreObjs, setgenreObjs] = useState([]);// Counts the occurances of each genre
 
   useEffect(() => {
-    const getTrack = async () => {
-      // Request Track object from Spotify API
-      const track = await axios.get("https://api.spotify.com/v1/tracks/" + id, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        params: {
-          id: id,
-        }
-        })
-
-      const artists = track.data.artists;
-
-      // Update genres array by requesting Artist object from Spotify API
-      const getGenres = async (artist) => {
-        const artistObject = await axios.get("https://api.spotify.com/v1/artists/" + artist.id, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        params: {
-          id: artist.id,
-        }
-        });
-
-        try {
-          artistObject.data.genres.forEach((g) => {
-            if (true || !genres.includes(g)) {
-              genres.push(g)
-            }
-          });
-
-          for (let i = 0; i < genres.length; i++) {
-            let objIndex = genreObjs.findIndex(g => g.genre === genres[i]);
-            if (objIndex > -1) {
-              // Increment occurances in existing genre
-              genreObjs[objIndex] = {
-                genre: genres[i], 
-                occurs: genreObjs[objIndex].occurs + 1
-              }
-            } else {
-              genreObjs.push({
-                genre: genres[i],
-                occurs: 1
-              })
-            }
-          }
-
-          setgenreObjs([...genreObjs, rankGenres(genreObjs)]) // Spread syntax ensures the state array is replaced rather than mutated
-          setGenres([...genres])
-        } catch (e) {
-          console.error(e);
-        }
-      }
-      
-      // Update genres array for each artist on the track
-      for (const artist of artists) {
-        await getGenres(artist);
-      }
-    }
-
-    console.log(genreObjs);
     getTrack();  
   }, [])
+
+  // Update track for every new track searched
+  useEffect(() => {
+    setTrack(track);
+    console.log(track)
+  }, [track])
+
+  // Gets a track with the provided track ID
+  const getTrack = async () => {
+    // Request Track object from Spotify API
+    const trackObject = await axios.get("https://api.spotify.com/v1/tracks/" + id, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      params: {
+        id: id,
+      }
+      })
+
+    const artists = trackObject.data.artists;
+
+    // Update genres array for each artist on the track
+    for (const artist of artists) {
+      await getGenres(artist);
+    }
+
+    setTrack(trackObject.data)
+  }
+    
+  // Update genres array by requesting Artist object from Spotify API
+  const getGenres = async (artist) => {
+    const artistObject = await axios.get("https://api.spotify.com/v1/artists/" + artist.id, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    params: {
+      id: artist.id,
+    }
+    });
+
+    try {
+      artistObject.data.genres.forEach((g) => {
+        if (true || !genres.includes(g)) {
+          genres.push(g)
+        }
+      });
+
+      for (let i = 0; i < genres.length; i++) {
+        let objIndex = genreObjs.findIndex(g => g.genre === genres[i]);
+        if (objIndex > -1) {
+          // Increment occurances in existing genre
+          genreObjs[objIndex] = {
+            genre: genres[i], 
+            occurs: genreObjs[objIndex].occurs + 1
+          }
+        } else {
+          genreObjs.push({
+            genre: genres[i],
+            occurs: 1
+          })
+        }
+      }
+
+      setgenreObjs([...genreObjs, rankGenres(genreObjs)]) // Spread syntax ensures the state array is replaced rather than mutated
+      setGenres([...genres])
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   // Ranks genres by occurance
   const rankGenres = (genreObjs) => {
@@ -92,6 +102,7 @@ const Track = () => {
     return array;
   }
 
+  // Renders genres by rank
   const renderGenres = (genreObjs, rank) => {
     if (genreObjs.length === 0) {
       return (<div></div>)
@@ -132,9 +143,33 @@ const Track = () => {
     }
   }
 
+  // Render track
+  const renderTrack = (trackObject) => {
+    return (
+      <div class="flex text-white">
+        <div>
+          { trackObject.album.images.length ? 
+            <div class="min-w-full">
+              <img src={trackObject.album.images[1].url} alt="" class="overflow-hidden rounded-lg"/> 
+            </div>
+            : <div>No Image</div> }
+        </div>
+
+        <div>
+          { trackObject.name }
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div class="bg-gray-900 h-full flex-col content-center">
       <NavBar />
+      { console.log(track) }
+      { Object.keys(track).length ? 
+          renderTrack(track) 
+          : <div>Track not rendered.</div>
+      }
       <div class="text-white w-full">
         { renderGenres(genreObjs.filter(genre => genre.rank === 1), 1) }
         { renderGenres(genreObjs.filter(genre => genre.rank === 2), 2) }
