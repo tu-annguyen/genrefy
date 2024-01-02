@@ -24,6 +24,11 @@ const Search = () => {
     setTracks(data.tracks.items)
   }
 
+  const navAndRefresh = (trackId) => {
+    navigate("../track/" + trackId)
+    navigate(0)
+  }
+
   const renderTracks = () => {
     return (
       <div class="w-full">
@@ -33,7 +38,7 @@ const Search = () => {
           <p class="w-4/12 mx-5">Album</p>
         </div>
         {tracks.map(track => (
-          <div onClick={() => navigate("/track/" + track.id)} class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700 cursor-pointer" key={track.id}>
+          <div onClick={() => navAndRefresh(track.id)} class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700 cursor-pointer" key={track.id}>
             {track.album.images.length ? 
               <div class="min-w-[64px]">
                 <img src={track.album.images[2].url} alt="" class="overflow-hidden rounded-lg"/> 

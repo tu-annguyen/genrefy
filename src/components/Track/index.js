@@ -2,6 +2,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import React, {useState, useEffect} from "react";
 import NavBar from "../NavBar";
+import Search from "../Search";
 
 const Track = () => {
   const token = window.localStorage.getItem("token");
@@ -180,12 +181,14 @@ const Track = () => {
   return (
     <div class="bg-gray-900 h-full flex-col content-center">
       <NavBar />
+      <Search />
+
       { console.log(track) }
       { Object.keys(track).length ? 
           renderTrack(track) 
           : <div>Track not rendered.</div>
       }
-      <div class="text-white w-full">
+      <div class="text-white w-full mx-5">
         { renderGenres(genreObjs.filter(genre => genre.rank === 1), 1) }
         { renderGenres(genreObjs.filter(genre => genre.rank === 2), 2) }
         { renderGenres(genreObjs.filter(genre => genre.rank === 3), 3) }
