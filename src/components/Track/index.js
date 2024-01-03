@@ -188,7 +188,7 @@ const Track = () => {
           renderTrack(track) 
           : <div>Track not rendered.</div>
       }
-      <div class="text-white w-full mx-5">
+      <div class="text-white w-full mx-5 my-5">
         { renderGenres(genreObjs.filter(genre => genre.rank === 1), 1) }
         { renderGenres(genreObjs.filter(genre => genre.rank === 2), 2) }
         { renderGenres(genreObjs.filter(genre => genre.rank === 3), 3) }

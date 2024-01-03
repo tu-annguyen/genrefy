@@ -64,18 +64,20 @@ const Search = () => {
   
   return (
     <div>
-      {token ?
-        <form class="flex justify-center items-center my-5" onSubmit={searchTracks}>
-          <input class="h-15 w-6/12 border rounded-lg p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" type="text" placeholder="Search track..." onChange={e => setSearchKey(e.target.value)}></input>
-          {searchKey ? 
-            <button class="bg-green-500 text-white font-medium py-2 px-4 m-5 rounded" type={"submit"}>Search</button>
-            : <button disabled title="Enter a track name before searching." class="bg-green-400 text-white font-medium py-2 px-4 m-5 rounded" type={"submit"}>Search</button>
-          }
-          
-        </form>
-      
-        : <h1 class="text-white font-medium text-3xl my-5">Please login</h1>
-      }
+      <div class="flex justify-center items-center">
+        {token ?
+          <form class="flex justify-center items-center my-5 w-screen" onSubmit={searchTracks}>
+            <input class="h-15 w-6/12 border rounded-lg p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white" type="text" placeholder="Search track..." onChange={e => setSearchKey(e.target.value)}></input>
+            {searchKey ? 
+              <button class="bg-green-500 text-white font-medium py-2 px-4 m-5 rounded" type={"submit"}>Search</button>
+              : <button disabled title="Enter a track name before searching." class="bg-green-400 text-white font-medium py-2 px-4 m-5 rounded" type={"submit"}>Search</button>
+            }
+            
+          </form>
+        
+          : <h1 class="text-white font-medium text-3xl my-5">Please login</h1>
+        }
+      </div>
 
       {tracks.length ? 
         <div class="flex-grow">
