@@ -11,9 +11,10 @@ const Track = () => {
   const [genres, setGenres] = useState([]);
   const [genreObjs, setgenreObjs] = useState([]);// Counts the occurances of each genre
 
+  // ***FIX THIS*** Runs too much
   useEffect(() => {
     getTrack();  
-  }, [])
+  })
 
   // Update track for every new track searched
   useEffect(() => {
