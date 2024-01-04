@@ -14,7 +14,7 @@ const Track = () => {
   // ***FIX THIS*** Runs too much
   useEffect(() => {
     getTrack();  
-  })
+  }, [])
 
   // Update track for every new track searched
   useEffect(() => {
