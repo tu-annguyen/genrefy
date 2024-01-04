@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 
 const Login = () => {
   const CLIENT_ID = "23e66581edf14c5f848e77f3976e8e19";
-  const REDIRECT_URI = "http://localhost:3000";
+  const REDIRECT_URI = "https://genrefy.app";
   const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
   const RESPONSE_TYPE = "token";
 
