@@ -6,6 +6,9 @@ const Search = () => {
   const token = window.localStorage.getItem("token");
   const [searchKey, setSearchKey] = useState("");
   const [tracks, setTracks] = useState([]);
+  const [track, setTrack] = useState({});
+  const [genres, setGenres] = useState([]);
+  const [genreObjs, setGenreObjs] = useState([]);// Counts the occurances of each genre
   const navigate = useNavigate();
 
   const searchTracks = async (e) => {
@@ -29,6 +32,157 @@ const Search = () => {
     navigate(0)
   }
 
+  // Gets a track with the provided track ID
+  const getTrack = async (id) => {
+    // Request Track object from Spotify API
+    const trackObject = await axios.get("https://api.spotify.com/v1/tracks/" + id, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      params: {
+        id: id,
+      }
+      })
+
+    const artists = trackObject.data.artists;
+
+    // Update genres array for each artist on the track
+    for (const artist of artists) {
+      await getGenres(artist);
+    }
+
+    setTracks([])
+    setTrack(trackObject.data)
+  }
+
+  // Update genres array by requesting Artist object from Spotify API
+  const getGenres = async (artist) => {
+    const artistObject = await axios.get("https://api.spotify.com/v1/artists/" + artist.id, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    params: {
+      id: artist.id,
+    }
+    });
+
+    try {
+      artistObject.data.genres.forEach((g) => {
+        if (true || !genres.includes(g)) {
+          genres.push(g)
+        }
+      });
+
+      for (let i = 0; i < genres.length; i++) {
+        let objIndex = genreObjs.findIndex(g => g.genre === genres[i]);
+        if (objIndex > -1) {
+          // Increment occurances in existing genre
+          genreObjs[objIndex] = {
+            genre: genres[i], 
+            occurs: genreObjs[objIndex].occurs + 1
+          }
+        } else {
+          genreObjs.push({
+            genre: genres[i],
+            occurs: 1
+          })
+        }
+      }
+
+      setGenreObjs([...genreObjs, rankGenres(genreObjs)]) // Spread syntax ensures the state array is replaced rather than mutated
+      setGenres([...genres])
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // Ranks genres by occurance
+  const rankGenres = (genreObjs) => {
+    let array = [].slice.call(genreObjs) // Turn genreObjs argument into array
+    array.sort((a, b) => {
+      return b.occurs - a.occurs
+    })
+
+    let rank = 1;
+    for (let i = 0; i < array.length; i++) {
+      if (i > 0 && array[i].occurs < array[i - 1].occurs) {
+        rank++;
+      }
+      array[i].rank = rank;
+    }
+
+    return array;
+  }
+
+  // Renders genres by rank
+  const renderGenres = (genreObjs, rank) => {
+    if (genreObjs.length === 0) {
+      return (<div></div>)
+    }
+
+    if (rank === 1) {
+      return (
+        <div class="flex my-2">
+          { genreObjs.map(g => (
+              <h1 class="font-bold text-3xl mx-3">{ g.genre }</h1>
+          ))}
+        </div>
+      );
+    } else if (rank === 2) {
+      return (
+        <div class="flex my-2">
+          { genreObjs.map(g => (
+              <h2 class="font-medium text-2xl mx-3">{ g.genre }</h2>
+          ))}
+        </div>
+      );
+    } else if (rank === 3) {
+      return (
+        <div class="flex my-2">
+          { genreObjs.map(g => (
+              <h3 class="font-regular text-xl mx-3">{ g.genre }</h3>
+          ))}
+        </div>
+      );
+    } else {
+      return (
+        <div class="flex my-2">
+          { genreObjs.map(g => (
+              <h1 class="font-light text-lg mx-3">{ g.genre }</h1>
+          ))}
+        </div>
+      );
+    }
+  }
+
+  // Render track
+  const renderTrack = (trackObject) => {
+    return (
+      <div class="flex text-white">
+        <div class="mx-5">
+          { trackObject.album.images.length ? 
+            <div class="min-w-full">
+              <img src={trackObject.album.images[1].url} alt="" class="overflow-hidden rounded-lg"/> 
+            </div>
+            : <div>No Image</div> }
+        </div>
+
+        <div class="flex-col justify-end h-300">
+          <div class="text-4xl font-bold flex-none">
+            { trackObject.name }
+          </div>
+          <div class="text-lg flex-none">
+            <div class="flex">
+              <h2 class="font-semibold"> { renderArtists(trackObject) } </h2>
+              <h2 class="ml-1"> { trackObject.album.release_date.slice(0, 4) } </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const renderTracks = () => {
     return (
       <div class="w-full">
@@ -38,13 +192,14 @@ const Search = () => {
           <p class="w-4/12 mx-5">Album</p>
         </div>
         {tracks.map(track => (
-          <div onClick={() => navAndRefresh(track.id)} class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700 cursor-pointer" key={track.id}>
+          // <div onClick={() => navAndRefresh(track.id)} class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700 cursor-pointer" key={track.id}>
+          <div onClick={() => getTrack(track.id)} class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700 cursor-pointer" key={track.id}>
             {track.album.images.length ? 
               <div class="min-w-[64px]">
                 <img src={track.album.images[2].url} alt="" class="overflow-hidden rounded-lg"/> 
               </div>
               : <div>No Image</div>}
-            <p class="w-6/12 mx-5">"{track.name}" by {renderArtists(track.artists)}</p>
+            <p class="w-6/12 mx-5">"{track.name}" by {renderArtists(track)}</p>
             <p class="w-4/12 mx-5">{track.album.name}</p>
           </div>
         ))};
@@ -52,16 +207,19 @@ const Search = () => {
     );
   }
 
-  const renderArtists = (artists) => {
-    let artistsStr = ""
-    for (let i = 0; i < artists.length - 1; i++) {
-      artistsStr += artists[i].name + ", ";
+  const renderArtists = (track) => {
+    let artistStr = "";
+    let i = 0;
+    while (typeof(track.artists[i]) != "undefined") {
+      artistStr += track.artists[i].name;
+      i += 1
+      if (typeof(track.artists[i]) != "undefined") {
+        artistStr += " \u2022 "
+      }
     }
-    artistsStr += artists[artists.length - 1].name;
-
-    return artistsStr
+    return artistStr;
   }
-  
+
   return (
     <div>
       <div class="flex justify-center items-center">
