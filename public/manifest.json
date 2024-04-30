@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Genrefy",
+  "name": "Discover songs' genres",
   "icons": [
     {
       "src": "favicon.ico",
