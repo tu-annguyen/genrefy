@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const Search = () => {
   const token = window.localStorage.getItem("token");
@@ -9,7 +8,6 @@ const Search = () => {
   const [track, setTrack] = useState({});
   const [genres, setGenres] = useState([]);
   const [genreObjs, setGenreObjs] = useState([]);// Counts the occurances of each genre
-  const navigate = useNavigate();
 
   const searchTracks = async (e) => {
     e.preventDefault();
@@ -25,11 +23,6 @@ const Search = () => {
     });
 
     setTracks(data.tracks.items)
-  }
-
-  const navAndRefresh = (trackId) => {
-    navigate("../track/" + trackId)
-    navigate(0)
   }
 
   // Gets a track with the provided track ID
