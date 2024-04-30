@@ -33,46 +33,60 @@ const Search = () => {
   }
 
   // Gets a track with the provided track ID
-  const getTrack = async (id) => {
+  const getTrack = async (trackObj) => {
     // Request Track object from Spotify API
-    const trackObject = await axios.get("https://api.spotify.com/v1/tracks/" + id, {
+    const trackResponse = await axios.get("https://api.spotify.com/v1/tracks/" + trackObj.id, {
       headers: {
         Authorization: `Bearer ${token}`
-      },
-      params: {
-        id: id,
       }
-      })
+    });
 
-    const artists = trackObject.data.artists;
+    const artists = trackResponse.data.artists;
+    let artistIDs = "";
+
+    // Create a comma-separated list of Spotify IDs for artists
+    for (const artist of artists) {
+      artistIDs += artist.id + ","
+    }
+    artistIDs = artistIDs.substring(0, artistIDs.length - 1) // Remove extra comma
 
     // Update genres array for each artist on the track
-    for (const artist of artists) {
-      await getGenres(artist);
-    }
+    await getGenres(artistIDs)
+
+    // Update genres array for each artist on the track
+    // for (const artist of artists) {
+      // await getGenres(artist);
+    // }
 
     setTracks([])
-    setTrack(trackObject.data)
+    setTrack(trackObj)
   }
 
   // Update genres array by requesting Artist object from Spotify API
-  const getGenres = async (artist) => {
-    const artistObject = await axios.get("https://api.spotify.com/v1/artists/" + artist.id, {
+  const getGenres = async (artistIDs) => {
+    const artistObjects = await axios.get("https://api.spotify.com/v1/artists/", {
     headers: {
       Authorization: `Bearer ${token}`
     },
     params: {
-      id: artist.id,
-    }
-    });
-
-    try {
-      artistObject.data.genres.forEach((g) => {
-        if (true || !genres.includes(g)) {
-          genres.push(g)
-        }
+      ids: artistIDs
+    },
+    timeout: 30000
+    })
+      .catch(function (error) {
+        console.log(error);
       });
 
+    console.log(artistObjects);
+    try {
+      // Add the genres of each artist into the genres array
+      artistObjects.data.artists.forEach((a) => {
+        a.genres.forEach((g) => {
+          genres.push(g)
+        });
+      });
+
+      // Count the occurances of each genre and stores into the genreObjs array
       for (let i = 0; i < genres.length; i++) {
         let objIndex = genreObjs.findIndex(g => g.genre === genres[i]);
         if (objIndex > -1) {
@@ -193,7 +207,7 @@ const Search = () => {
         </div>
         {tracks.map(track => (
           // <div onClick={() => navAndRefresh(track.id)} class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700 cursor-pointer" key={track.id}>
-          <div onClick={() => getTrack(track.id)} class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700 cursor-pointer" key={track.id}>
+          <div onClick={() => getTrack(track)} class="flex justify-start items-center text-white rounded-lg p-3 m-5 mx-10 hover:bg-gray-700 cursor-pointer" key={track.id}>
             {track.album.images.length ? 
               <div class="min-w-[64px]">
                 <img src={track.album.images[2].url} alt="" class="overflow-hidden rounded-lg"/> 
@@ -243,6 +257,17 @@ const Search = () => {
         </div>
         : <div class="flex-auto"></div>
       }
+
+      { Object.keys(track).length ? 
+          renderTrack(track) 
+          : <div class="text-white">Track not rendered.</div>
+      }
+      <div class="text-white w-full mx-5 my-5">
+        { renderGenres(genreObjs.filter(genre => genre.rank === 1), 1) }
+        { renderGenres(genreObjs.filter(genre => genre.rank === 2), 2) }
+        { renderGenres(genreObjs.filter(genre => genre.rank === 3), 3) }
+        { renderGenres(genreObjs.filter(genre => genre.rank !== 1 && genre.rank !== 2 && genre.rank !== 3), 4) }
+      </div>
     </div>
   );
 }
